@@ -185,6 +185,7 @@ main(int argc, char *argv[]) {
                     dump_message(&reply);
                     break;
                 case TYPE_LIST:
+                    // ファイルの情報を取得して、そうデータサイズを計算して、1024バイトごとに送信する
                     break;
                 case TYPE_RETR:
                     break;

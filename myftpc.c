@@ -211,7 +211,7 @@ main(int argc, char *argv[])
 
         // CD command
         if (strcmp(commandline_argv[0], "cd") == 0) {
-            fprintf(stderr, "[DEBUG] CD\n");
+            // fprintf(stderr, "[DEBUG] CD\n");
             if (commandline_argc != 2) {
                 fprintf(stderr, "ERROR: command syntax error\n");
                 continue;
@@ -297,6 +297,115 @@ main(int argc, char *argv[])
         // DIR command
         if (strcmp(commandline_argv[0], "dir") == 0) {
             fprintf(stderr, "[DEBUG] DIR\n");
+            if (!(commandline_argc == 2 || commandline_argc == 1)) {
+                fprintf(stderr, "ERROR: command syntax error\n");
+                continue;
+            }
+            struct myftph_data dir_message;
+            memset(&dir_message, 0, sizeof(struct myftph_data));
+            char target_dir[SIZE];
+            memset(&target_dir, 0, SIZE);
+            dir_message.Type = TYPE_LIST;
+            if (commandline_argc == 1) {
+                getcwd(target_dir, SIZE);
+            } else {
+                strncpy(target_dir, commandline_argv[1], strlen(commandline_argv[1]) + 1);
+            }
+            dir_message.Length = (uint16_t) strlen(target_dir);
+            strncpy(dir_message.Data, target_dir, dir_message.Length);
+            if (send(client_socket, &dir_message, sizeof(struct myftph_data), 0) < 0) {
+                perror("send @ DIR");
+                exit(EXIT_FAILURE);
+            }
+            fprintf(stderr, "\t-> send DIR message\n");
+            dump_data_message(&dir_message);
+            struct myftph reply;
+            memset(&reply, 0, sizeof(struct myftph));
+            if (recv(client_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                perror("recv @ DIR");
+                exit(EXIT_FAILURE);
+            }
+
+            // TODO: ----------------------
+            if (reply.Type == TYPE_OK_COMMAND && reply.Code == CODE_DATA_FOLLOW_S_TO_C) {
+                fprintf(stderr, "<- recv OK message\n");
+                dump_message(&reply);
+                struct myftph_data buf;
+                uint16_t want = reply.Length;
+                char result[reply.Length + 1];
+                memset(&result, 0, sizeof(result));
+                int times = want / sizeof(struct myftph_data);
+                size_t remain = (size_t) (want % sizeof(struct myftph_data));
+                int i = 0;
+                for (i = 0; i <= times; i++) {
+                    memset(&buf, 0, sizeof(struct myftph_data));
+                    if (i == times) {
+                        if (recv(client_socket, &buf, sizeof(struct myftph) + remain, 0) < 0) {
+                            perror("recv @ DIR");
+                            exit(EXIT_FAILURE);
+                        }
+                        fprintf(stderr, "<- recv DATA message\n");
+                        dump_data_message(&buf);
+                    } else {
+                        if (recv(client_socket, &buf, sizeof(struct myftph_data), 0) < 0) {
+                            perror("recv @ DIR");
+                            exit(EXIT_FAILURE);
+                        }
+                        fprintf(stderr, "<- recv DATA message\n");
+                        dump_data_message(&buf);
+                    }
+                    strcat(result, buf.Data);
+                }
+                fprintf(stderr, "%s\n", result);
+                // TODO: ------------------------------
+            } else {
+                switch (reply.Type) {
+                    case TYPE_CMD_ERR:
+                        switch (reply.Code) {
+                            case CODE_SYNTAX_ERROR:
+                                fprintf(stderr, "<- recv ERROR message\n");
+                                dump_message(&reply);
+                                break;
+                            case CODE_UNDEFINED_COMMAND:
+                                fprintf(stderr, "<- recv ERROR message\n");
+                                dump_message(&reply);
+                                break;
+                            case CODE_PROTOCOL_ERROR:
+                                fprintf(stderr, "<- recv ERROR message\n");
+                                dump_message(&reply);
+                                break;
+                            default:
+                                fprintf(stderr, "ERROR: recv unknown code message\n");
+                                dump_message(&reply);
+                                break;
+                        }
+                        break;
+                    case TYPE_FILE_ERR:
+                        switch (reply.Code) {
+                            case CODE_NO_SUCH_FILES:
+                                fprintf(stderr, "<- recv ERROR message\n");
+                                dump_message(&reply);
+                                break;
+                            case CODE_NO_ACCESS:
+                                fprintf(stderr, "<- recv ERROR message\n");
+                                dump_message(&reply);
+                                break;
+                            default:
+                                fprintf(stderr, "ERROR: recv unknown code message\n");
+                                dump_message(&reply);
+                                break;
+                        }
+                        break;
+                    case TYPE_UNKWN_ERR:
+                        fprintf(stderr, "<- recv ERROR message\n");
+                        dump_message(&reply);
+                        break;
+                    default:
+                        fprintf(stderr, "ERROR: recv unknown type message\n");
+                        dump_message(&reply);
+                        break;
+                }
+            }
 
         }
 
@@ -528,7 +637,7 @@ dump_message(struct myftph *message)
 void
 dump_data_message(struct myftph_data *message)
 {
-    char tmp[SIZE];
+    char tmp[DATASIZE];
     memset(&tmp, 0, sizeof(tmp));
     switch (message->Type) {
         case TYPE_QUIT:         // client -> server
@@ -551,6 +660,13 @@ dump_data_message(struct myftph_data *message)
             fprintf(stderr, "\t+------------------------\n");
             break;
         case TYPE_LIST:         // client -> server
+            strncpy(tmp, message->Data, message->Length + 1);
+            fprintf(stderr, "\t+-- [ (->) DIR ]--------\n");
+            fprintf(stderr, "\t|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
+            fprintf(stderr, "\t|\tCode: %s\n", OK_CODE_NAME[message->Code]);
+            fprintf(stderr, "\t|\tLength: %d\n", message->Length);
+            fprintf(stderr, "\t|\tData: %s\n", message->Data);
+            fprintf(stderr, "\t+------------------------\n");
             break;
         case TYPE_RETR:         // client -> server
             break;
@@ -572,6 +688,17 @@ dump_data_message(struct myftph_data *message)
         case TYPE_UNKWN_ERR:
             break;
         case TYPE_DATA:         // client <- server
+            if (message->Length == DATASIZE) {
+                strncpy(tmp, message->Data, DATASIZE - 1);
+            } else {
+                strncpy(tmp, message->Data, message->Length + 1);
+            }
+            fprintf(stderr, "+-- [ (<-) DATA ]--------\n");
+            fprintf(stderr, "|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
+            fprintf(stderr, "|\tCode: %s\n", OK_CODE_NAME[message->Code]);
+            fprintf(stderr, "|\tLength: %d\n", message->Length);
+            fprintf(stderr, "|\tData: %s\n", message->Data);
+            fprintf(stderr, "+------------------------\n");
             break;
         default:
             return;
