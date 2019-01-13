@@ -34,11 +34,12 @@ struct myftph {
 #define TYPE_STOR           0x06
 #define TYPE_OK_COMMAND     0x10
 #define TYPE_CMD_ERR        0x11
-#define TYPE_OTHER_ERR      0x12
+#define TYPE_FILE_ERR      0x12
+#define TYPE_UNKWN_ERR      0x13
 #define TYPE_DATA           0x20
 
 // MYFTP header code
-#define CODE_NO_DATA_FOLLOW         0x00
+#define CODE_WITH_NO_DATA           0x00
 #define CODE_DATA_FOLLOW_S_TO_C     0x01
 #define CODE_DATA_FOLLOW_C_TO_S     0x02
 #define CODE_SYNTAX_ERROR           0x00
@@ -70,8 +71,8 @@ char *MESSAGE_TYPE_NAME[] = {
         "ERROR(0xf)",
         "OK_COMMAND(0x10)",
         "CMD_ERR(0x11)",
-        "OTHER_ERR(0x12)",
-        "ERROR(0x13)",
+        "FILE_ERR(0x12)",
+        "UNKWN_ERR(0x13)",
         "ERROR(0x14)",
         "ERROR(0x15)",
         "ERROR(0x16)",
@@ -89,7 +90,7 @@ char *MESSAGE_TYPE_NAME[] = {
 
 // table for message OK code
 char *OK_CODE_NAME[] = {
-        "CODE_NO_DATA_FOLLOW(0x00)",
+        "CODE_WITH_NO_DATA(0x00)",
         "CODE_DATA_FOLLOW_S_TO_C(0x01)",
         "CODE_DATA_FOLLOW_C_TO_S(0x02)"
 };

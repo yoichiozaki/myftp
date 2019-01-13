@@ -89,7 +89,7 @@ main(int argc, char *argv[]) {
                     struct myftph reply;
                     memset(&reply, 0, sizeof(struct myftph));
                     reply.Type = TYPE_OK_COMMAND;
-                    reply.Code = CODE_NO_DATA_FOLLOW;
+                    reply.Code = CODE_WITH_NO_DATA;
                     reply.Length = 0;
                     if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
                         perror("send @ QUIT");
@@ -111,7 +111,7 @@ main(int argc, char *argv[]) {
                     struct myftph_data result;
                     memset(&result, 0, sizeof(result));
                     result.Type = TYPE_OK_COMMAND;
-                    result.Code = CODE_NO_DATA_FOLLOW;
+                    result.Code = CODE_WITH_NO_DATA;
                     result.Length = (uint16_t) (strlen(pathname));
                     strncpy(result.Data, pathname, result.Length); // trim last '\0'
                     if (send(server_socket, &result, sizeof(struct myftph_data), 0) < 0) {
@@ -126,6 +126,7 @@ main(int argc, char *argv[]) {
                     fprintf(stderr, "ERROR: recv unknown message, so do not quit\n");
                     break;
             }
+            continue;
         } else {
             buf_data.Type = buf.Type;
             buf_data.Code = buf.Code;
@@ -134,8 +135,48 @@ main(int argc, char *argv[]) {
                 perror("recv");
                 exit(EXIT_FAILURE);
             }
+            char *dst[buf_data.Length + 1];
+            struct myftph reply;
+            memset(&reply, 0, sizeof(struct myftph));
             switch (buf.Type) {
                 case TYPE_CWD:
+                    fprintf(stderr, "<- recv CWD message\n");
+                    dump_data_message(&buf_data);
+                    memset(&dst, 0, sizeof(dst));
+                    reply.Length = 0;
+                    if (chdir((const char *) dst) == 0) {
+                        reply.Type = TYPE_OK_COMMAND;
+                        reply.Code = CODE_WITH_NO_DATA;
+                        if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                            perror("send @ CWD");
+                            exit(EXIT_FAILURE);
+                        }
+                        fprintf(stderr, "\t-> send OK message\n");
+                        dump_message(&reply);
+                        break;
+                    } else {
+                        switch (errno) {
+                            case EACCES:
+                                reply.Type = TYPE_FILE_ERR;
+                                reply.Code = CODE_NO_ACCESS;
+                                break;
+                            case ENOENT:
+                            case ENOTDIR:
+                                reply.Type = TYPE_FILE_ERR;
+                                reply.Code = CODE_NO_SUCH_FILES;
+                                break;
+                            default:
+                                reply.Type = TYPE_UNKWN_ERR;
+                                reply.Code = CODE_UNKNOWN_ERROR;
+                                break;
+                        }
+                    }
+                    if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                        perror("send @ CWD");
+                        exit(EXIT_FAILURE);
+                    }
+                    fprintf(stderr, "\t-> send ERR message\n");
+                    dump_message(&reply);
                     break;
                 case TYPE_LIST:
                     break;
@@ -148,6 +189,7 @@ main(int argc, char *argv[]) {
                     fprintf(stderr, "ERROR: recv unknown message, so do not quit\n");
                     break;
             }
+            continue;
         }
     }
 }
@@ -183,7 +225,9 @@ dump_message(struct myftph *message)
             break;
         case TYPE_CMD_ERR:      // client <- server
             break;
-        case TYPE_OTHER_ERR:    // client <- server
+        case TYPE_FILE_ERR:    // client <- server
+            break;
+        case TYPE_UNKWN_ERR:
             break;
         case TYPE_DATA:         // client <- server
             break;
@@ -196,6 +240,7 @@ void
 dump_data_message(struct myftph_data *message)
 {
     char tmp[SIZE];
+    memset(&tmp, 0, sizeof(tmp));
     switch (message->Type) {
         case TYPE_QUIT:
             fprintf(stderr, "\t+-- [ (->) QUIT ]--------\n");
@@ -208,7 +253,13 @@ dump_data_message(struct myftph_data *message)
             fprintf(stderr, "\t+------------------------\n");
             break;
         case TYPE_CWD:
-            break;
+            strncpy(tmp, message->Data, message->Length + 1);
+            fprintf(stderr, "\t+-- [ (->) OK ]--------\n");
+            fprintf(stderr, "\t|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
+            fprintf(stderr, "\t|\tCode: %s\n", OK_CODE_NAME[message->Code]);
+            fprintf(stderr, "\t|\tLength: %d\n", message->Length);
+            fprintf(stderr, "\t|\tData: %s\n", message->Data);
+            fprintf(stderr, "\t+------------------------\n");
         case TYPE_LIST:
             break;
         case TYPE_RETR:
@@ -218,7 +269,7 @@ dump_data_message(struct myftph_data *message)
         case TYPE_OK_COMMAND:
             strncpy(tmp, message->Data, message->Length + 1);
             fprintf(stderr, "\t+-- [ (->) OK ]--------\n");
-            fprintf(stderr, "\t|\tType: %s\n", MESSAGE_TYPE_NAME[TYPE_OK_COMMAND]);
+            fprintf(stderr, "\t|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
             fprintf(stderr, "\t|\tCode: %s\n", OK_CODE_NAME[message->Code]);
             fprintf(stderr, "\t|\tLength: %d\n", message->Length);
             fprintf(stderr, "\t|\tData: %s\n", message->Data);
@@ -226,7 +277,9 @@ dump_data_message(struct myftph_data *message)
             break;
         case TYPE_CMD_ERR:
             break;
-        case TYPE_OTHER_ERR:
+        case TYPE_FILE_ERR:
+            break;
+        case TYPE_UNKWN_ERR:
             break;
         case TYPE_DATA:
             break;
