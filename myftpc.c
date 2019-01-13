@@ -500,21 +500,21 @@ dump_message(struct myftph *message)
         case TYPE_CMD_ERR:      // client <- server
             fprintf(stderr, "+-- [ (<-) CMD ERR ]--------\n");
             fprintf(stderr, "|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
-            fprintf(stderr, "|\tCode: %s\n", OK_CODE_NAME[message->Code]);
+            fprintf(stderr, "|\tCode: %s\n", CMD_ERROR_CODE_NAME[message->Code]);
             fprintf(stderr, "|\tLength: %d\n", message->Length);
             fprintf(stderr, "+------------------------\n");
             break;
         case TYPE_FILE_ERR:    // client <- server
             fprintf(stderr, "+-- [ (<-) FILE ERR ]--------\n");
             fprintf(stderr, "|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
-            fprintf(stderr, "|\tCode: %s\n", OK_CODE_NAME[message->Code]);
+            fprintf(stderr, "|\tCode: %s\n", FILE_ERROR_CODE_NAME[message->Code]);
             fprintf(stderr, "|\tLength: %d\n", message->Length);
             fprintf(stderr, "+------------------------\n");
             break;
         case TYPE_UNKWN_ERR:
             fprintf(stderr, "+-- [ (<-) UNKWN ERR ]--------\n");
             fprintf(stderr, "|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
-            fprintf(stderr, "|\tCode: %s\n", OK_CODE_NAME[message->Code]);
+            fprintf(stderr, "|\tCode: %s\n", "CODE_UNKNOWN_ERROR(0x05)");
             fprintf(stderr, "|\tLength: %d\n", message->Length);
             fprintf(stderr, "+------------------------\n");
             break;

@@ -12,11 +12,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="04ff4d9f-856d-47a9-9f84-dcf2ce381f36" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/myftp.h" beforeDir="false" afterPath="$PROJECT_DIR$/myftp.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/myftpc.c" beforeDir="false" afterPath="$PROJECT_DIR$/myftpc.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/myftpd" beforeDir="false" afterPath="$PROJECT_DIR$/myftpd" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/myftpd.c" beforeDir="false" afterPath="$PROJECT_DIR$/myftpd.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/myftpd.o" beforeDir="false" afterPath="$PROJECT_DIR$/myftpd.o" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -36,8 +35,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/myftp.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2">
-              <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+            <state relative-caret-position="-431">
+              <caret line="49" column="40" lean-forward="true" selection-start-line="49" selection-start-column="8" selection-end-line="49" selection-end-column="40" />
             </state>
           </provider>
         </entry>
@@ -45,8 +44,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/myftpc.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4666">
-              <caret line="514" column="45" selection-start-line="514" selection-start-column="45" selection-end-line="514" selection-end-column="45" />
+            <state relative-caret-position="289">
+              <caret line="502" column="64" selection-start-line="502" selection-start-column="64" selection-end-line="502" selection-end-column="64" />
               <folding>
                 <element signature="e#41#63#0" expanded="true" />
               </folding>
@@ -57,8 +56,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/myftpd.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="506">
-              <caret line="177" column="58" selection-start-line="177" selection-start-column="58" selection-end-line="177" selection-end-column="58" />
+            <state relative-caret-position="632">
+              <caret line="292" column="47" selection-start-line="292" selection-start-column="47" selection-end-line="292" selection-end-column="47" />
               <folding>
                 <element signature="e#41#63#0" expanded="true" />
               </folding>
@@ -80,9 +79,9 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
-        <option value="$PROJECT_DIR$/myftpc.c" />
         <option value="$PROJECT_DIR$/myftp.h" />
         <option value="$PROJECT_DIR$/myftpd.c" />
+        <option value="$PROJECT_DIR$/myftpc.c" />
       </list>
     </option>
   </component>
@@ -146,12 +145,12 @@
       <option name="presentableId" value="Default" />
       <updated>1547380557052</updated>
       <workItem from="1547380558465" duration="2296000" />
-      <workItem from="1547382901824" duration="15728000" />
+      <workItem from="1547382901824" duration="17381000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="18024000" />
+    <option name="totallyTimeSpent" value="19677000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="840" y="0" width="840" height="1050" extended-state="0" />
@@ -191,15 +190,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/myftp.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2">
-          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+        <state relative-caret-position="-431">
+          <caret line="49" column="40" lean-forward="true" selection-start-line="49" selection-start-column="8" selection-end-line="49" selection-end-column="40" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/myftpc.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4666">
-          <caret line="514" column="45" selection-start-line="514" selection-start-column="45" selection-end-line="514" selection-end-column="45" />
+        <state relative-caret-position="289">
+          <caret line="502" column="64" selection-start-line="502" selection-start-column="64" selection-end-line="502" selection-end-column="64" />
           <folding>
             <element signature="e#41#63#0" expanded="true" />
           </folding>
@@ -208,8 +207,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/myftpd.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="506">
-          <caret line="177" column="58" selection-start-line="177" selection-start-column="58" selection-end-line="177" selection-end-column="58" />
+        <state relative-caret-position="632">
+          <caret line="292" column="47" selection-start-line="292" selection-start-column="47" selection-end-line="292" selection-end-column="47" />
           <folding>
             <element signature="e#41#63#0" expanded="true" />
           </folding>

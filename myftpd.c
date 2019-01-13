@@ -131,11 +131,16 @@ main(int argc, char *argv[]) {
             buf_data.Type = buf.Type;
             buf_data.Code = buf.Code;
             buf_data.Length = buf.Length;
-            if (recv(server_socket, &buf_data, buf_data.Length, 0) < 0) {
+            if (recv(server_socket, &buf_data.Data, buf_data.Length, 0) < 0) {
                 perror("recv");
                 exit(EXIT_FAILURE);
             }
-            char *dst[buf_data.Length + 1];
+            char garbage[DATASIZE - buf_data.Length];
+            if (recv(server_socket, garbage, (size_t) (DATASIZE - buf_data.Length), 0) < 0) {
+                perror("recv @ garbage");
+                exit(EXIT_FAILURE);
+            }
+            char dst[buf.Length+1];
             struct myftph reply;
             memset(&reply, 0, sizeof(struct myftph));
             switch (buf.Type) {
@@ -143,8 +148,9 @@ main(int argc, char *argv[]) {
                     fprintf(stderr, "<- recv CWD message\n");
                     dump_data_message(&buf_data);
                     memset(&dst, 0, sizeof(dst));
+                    strncpy(dst, buf_data.Data, buf_data.Length);
                     reply.Length = 0;
-                    if (chdir((const char *) dst) == 0) {
+                    if (chdir(dst) == 0) {
                         reply.Type = TYPE_OK_COMMAND;
                         reply.Code = CODE_WITH_NO_DATA;
                         if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
@@ -189,7 +195,6 @@ main(int argc, char *argv[]) {
                     fprintf(stderr, "ERROR: recv unknown message, so do not quit\n");
                     break;
             }
-            continue;
         }
     }
 }
@@ -218,16 +223,31 @@ dump_message(struct myftph *message)
             break;
         case TYPE_OK_COMMAND:   // client <- server
             fprintf(stderr, "\t+-- [ (->) OK ]--------\n");
-            fprintf(stderr, "\t|\tType: %s\n", MESSAGE_TYPE_NAME[TYPE_OK_COMMAND]);
+            fprintf(stderr, "\t|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
             fprintf(stderr, "\t|\tCode: %s\n", OK_CODE_NAME[message->Code]);
             fprintf(stderr, "\t|\tLength: %d\n", message->Length);
             fprintf(stderr, "\t+------------------------\n");
             break;
         case TYPE_CMD_ERR:      // client <- server
+            fprintf(stderr, "\t+-- [ (->) CMD ERR ]--------\n");
+            fprintf(stderr, "\t|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
+            fprintf(stderr, "\t|\tCode: %s\n", CMD_ERROR_CODE_NAME[message->Code]);
+            fprintf(stderr, "\t|\tLength: %d\n", message->Length);
+            fprintf(stderr, "\t+------------------------\n");
             break;
         case TYPE_FILE_ERR:    // client <- server
+            fprintf(stderr, "\t+-- [ (->) FILE ERR ]--------\n");
+            fprintf(stderr, "\t|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
+            fprintf(stderr, "\t|\tCode: %s\n", FILE_ERROR_CODE_NAME[message->Code]);
+            fprintf(stderr, "\t|\tLength: %d\n", message->Length);
+            fprintf(stderr, "\t+------------------------\n");
             break;
         case TYPE_UNKWN_ERR:
+            fprintf(stderr, "\t+-- [ (->) UNKWN ERR ]--------\n");
+            fprintf(stderr, "\t|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
+            fprintf(stderr, "\t|\tCode: %s\n", "CODE_UNKNOWN_ERROR(0x05)");
+            fprintf(stderr, "\t|\tLength: %d\n", message->Length);
+            fprintf(stderr, "\t+------------------------\n");
             break;
         case TYPE_DATA:         // client <- server
             break;
@@ -254,12 +274,12 @@ dump_data_message(struct myftph_data *message)
             break;
         case TYPE_CWD:
             strncpy(tmp, message->Data, message->Length + 1);
-            fprintf(stderr, "\t+-- [ (->) OK ]--------\n");
-            fprintf(stderr, "\t|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
-            fprintf(stderr, "\t|\tCode: %s\n", OK_CODE_NAME[message->Code]);
-            fprintf(stderr, "\t|\tLength: %d\n", message->Length);
-            fprintf(stderr, "\t|\tData: %s\n", message->Data);
-            fprintf(stderr, "\t+------------------------\n");
+            fprintf(stderr, "+-- [ (<-) CWD ]--------\n");
+            fprintf(stderr, "|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
+            fprintf(stderr, "|\tCode: %s\n", OK_CODE_NAME[message->Code]);
+            fprintf(stderr, "|\tLength: %d\n", message->Length);
+            fprintf(stderr, "|\tData: %s\n", message->Data);
+            fprintf(stderr, "+------------------------\n");
         case TYPE_LIST:
             break;
         case TYPE_RETR:
