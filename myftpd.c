@@ -146,7 +146,7 @@ main(int argc, char *argv[]) {
             memset(&reply, 0, sizeof(struct myftph));
             char result[DATASIZE*10];
             memset(&result, 0, sizeof(result));
-            int result_size;
+            size_t result_size = 0;
             char result_tmp[DATASIZE*10];
             memset(&result_tmp, 0, sizeof(result_tmp));
             struct myftph_data reply_data;
@@ -205,7 +205,29 @@ main(int argc, char *argv[]) {
                     if((dir = opendir(target)) == NULL) {
                         perror("opendir");
                         fprintf(stderr, "ERROR: command execution error\n");
-                        // TODO: エラーメッセージを返す
+                        memset(&reply, 0, sizeof(struct myftph));
+                        switch (errno) {
+                            case EACCES:
+                                reply.Type = TYPE_FILE_ERR;
+                                reply.Code = CODE_NO_ACCESS;
+                                break;
+                            case ENOENT:
+                            case ENOTDIR:
+                                reply.Type = TYPE_FILE_ERR;
+                                reply.Code = CODE_NO_SUCH_FILES;
+                                break;
+                            default:
+                                reply.Type = TYPE_UNKWN_ERR;
+                                reply.Code = CODE_UNKNOWN_ERROR;
+                                break;
+                        }
+                        if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                            perror("send @ LIST ERR");
+                            exit(EXIT_FAILURE);
+                        }
+                        fprintf(stderr, "\t-> send ERR message\n");
+                        dump_message(&reply);
+                        break;
                     }
                     for(dp = readdir(dir); dp != NULL; dp = readdir(dir)) {
                         stat(dp->d_name, &statbuf);
@@ -257,26 +279,26 @@ main(int argc, char *argv[]) {
                     fprintf(stderr, "\t-> send OK message\n");
 
                     // fprintf(stderr, "[debug] result size: %ld\n", strlen(result));
-                    result_size = (int) strlen(result);
                     now = result;
-                    while (result_size > 0) {
+                    while (result_size <= strlen(result)) {
                         memset(&reply_data, 0, sizeof(struct myftph_data));
-                        strncpy(reply_data.Data, now, DATASIZE);
-                        if ((sent_size = send(server_socket, &reply_data, sizeof(struct myftph_data), 0)) < 0 ) {
-                            perror("send @ DIR DATA");
-                            exit(EXIT_FAILURE);
-                        }
-                        now += DATASIZE;
-                        result_size -= sent_size;
-                        // fprintf(stderr, "[debug] result_size: %d\n", result_size);
                         reply_data.Type = TYPE_DATA;
-                        if (result_size < 0) {
+                        result_size += sent_size;
+                        if (result_size > strlen(result)) {
                             reply_data.Code = CODE_DATA_NO_FOLLOW;
                             reply_data.Length = DATASIZE;
                         } else {
                             reply_data.Code = CODE_DATA_FOLLOW;
                             reply_data.Length = DATASIZE;
                         }
+                        strncpy(reply_data.Data, now, DATASIZE);
+                        if ((sent_size = send(server_socket, &reply_data, sizeof(struct myftph_data), 0)) < 0 ) {
+                            perror("send @ DIR DATA");
+                            exit(EXIT_FAILURE);
+                        }
+                        now += DATASIZE;
+                        fprintf(stderr, "[debug] result_size: %d\n", (int) result_size);
+                        fprintf(stderr, "\t-> send DATA message\n");
                         dump_data_message(&reply_data);
                     }
                     continue;

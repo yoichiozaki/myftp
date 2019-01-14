@@ -296,7 +296,7 @@ main(int argc, char *argv[])
 
         // DIR command
         if (strcmp(commandline_argv[0], "dir") == 0) {
-            fprintf(stderr, "[DEBUG] DIR\n");
+            // fprintf(stderr, "[DEBUG] DIR\n");
             if (!(commandline_argc == 2 || commandline_argc == 1)) {
                 fprintf(stderr, "ERROR: command syntax error\n");
                 continue;
@@ -307,7 +307,7 @@ main(int argc, char *argv[])
             memset(&target_dir, 0, SIZE);
             dir_message.Type = TYPE_LIST;
             if (commandline_argc == 1) {
-                getcwd(target_dir, SIZE);
+                strncpy(target_dir, ".", 1);
             } else {
                 strncpy(target_dir, commandline_argv[1], strlen(commandline_argv[1]) + 1);
             }
@@ -326,52 +326,27 @@ main(int argc, char *argv[])
                 exit(EXIT_FAILURE);
             }
 
-            // TODO: ----------------------
             if (reply.Type == TYPE_OK_COMMAND && reply.Code == CODE_DATA_FOLLOW_S_TO_C) {
                 fprintf(stderr, "<- recv OK message\n");
                 dump_message(&reply);
                 struct myftph_data buf;
-                int want;
-                char result[reply.Length + 1];
+                char result[DATASIZE*10];
                 memset(&result, 0, sizeof(result));
-                int times = 999999999; // so big
-                int remain = 0;
-                int i = 0;
-                // fprintf(stderr, "[debug] times = %d, remain = %d\n", times, remain);
-                for (i = 0; i <= times; i++) {
+                for (;;) {
                     memset(&buf, 0, sizeof(struct myftph_data));
-                    if (i == times) {
-                        if (recv(client_socket, &buf, sizeof(struct myftph) + remain, 0) < 0) {
-                            perror("recv @ DIR");
-                            exit(EXIT_FAILURE);
-                        }
-                        fprintf(stderr, "<- recv DATA message\n");
-                        dump_data_message(&buf);
-                    } else {
-                        if (recv(client_socket, &buf, sizeof(struct myftph_data), 0) < 0) {
-                            perror("recv @ DIR");
-                            exit(EXIT_FAILURE);
-                        }
-                        dump_data_message(&buf);
-                        if (times == 999999999) { // only first
-                            want = (int) buf.Length;
-                            times = want / (int) sizeof(struct myftph_data) - 1;
-                            remain = want % (int) sizeof(struct myftph_data);
-                            fprintf(stderr, "want = %d, times = %d, remain = %d\n", want, times, remain);
-                        }
-                        fprintf(stderr, "<- recv DATA message\n");
-                        dump_data_message(&buf);
+                    if (recv(client_socket, &buf, sizeof(struct myftph_data), 0) < 0) {
+                        perror("recv @ DIR");
+                        exit(EXIT_FAILURE);
                     }
-                    fprintf(stderr, "stdcat\n");
+                    fprintf(stderr, "<- recv DATA message\n");
+                    dump_data_message(&buf);
                     strcat(result, buf.Data);
+                    if (buf.Code == CODE_DATA_NO_FOLLOW) {
+                        break;
+                    }
                 }
-                char garbage[DATASIZE - reply.Length];
-                if (recv(client_socket, garbage, (size_t) (DATASIZE - remain), 0) < 0) {
-                    perror("recv @ PWD garbage");
-                    exit(EXIT_FAILURE);
-                }
+                fprintf(stderr, "\n");
                 fprintf(stderr, "%s\n", result);
-                // TODO: ------------------------------
             } else {
                 switch (reply.Type) {
                     case TYPE_CMD_ERR:
