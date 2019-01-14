@@ -12,7 +12,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="04ff4d9f-856d-47a9-9f84-dcf2ce381f36" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/myftpc" beforeDir="false" afterPath="$PROJECT_DIR$/myftpc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/myftpc.c" beforeDir="false" afterPath="$PROJECT_DIR$/myftpc.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/myftpc.o" beforeDir="false" afterPath="$PROJECT_DIR$/myftpc.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/myftpd" beforeDir="false" afterPath="$PROJECT_DIR$/myftpd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/myftpd.c" beforeDir="false" afterPath="$PROJECT_DIR$/myftpd.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/myftpd.o" beforeDir="false" afterPath="$PROJECT_DIR$/myftpd.o" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -32,7 +37,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/myftp.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="735">
+            <state relative-caret-position="-333">
               <caret line="49" column="40" lean-forward="true" selection-start-line="49" selection-start-column="8" selection-end-line="49" selection-end-column="40" />
             </state>
           </provider>
@@ -41,8 +46,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/myftpc.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5007">
-              <caret line="695" column="44" selection-start-line="695" selection-start-column="44" selection-end-line="695" selection-end-column="44" />
+            <state relative-caret-position="410">
+              <caret line="353" column="25" lean-forward="true" selection-start-line="353" selection-start-column="25" selection-end-line="353" selection-end-column="25" />
               <folding>
                 <element signature="e#41#63#0" expanded="true" />
               </folding>
@@ -53,11 +58,47 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/myftpd.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2589">
-              <caret line="292" column="47" selection-start-line="292" selection-start-column="47" selection-end-line="292" selection-end-column="47" />
+            <state relative-caret-position="402">
+              <caret line="267" column="25" selection-start-line="267" selection-start-column="25" selection-end-line="267" selection-end-column="25" />
               <folding>
                 <element signature="e#41#63#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/sys/_types/_ssize_t.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="450">
+              <caret line="30" column="21" lean-forward="true" selection-start-line="30" selection-start-column="21" selection-end-line="30" selection-end-column="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/i386/_types.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="224">
+              <caret line="91" column="28" selection-start-line="91" selection-start-column="28" selection-end-line="91" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/sys/_types/_size_t.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="450">
+              <caret line="30" column="34" selection-start-line="30" selection-start-column="34" selection-end-line="30" selection-end-column="34" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file:///Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/include/opencl-c.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="224">
+              <caret line="13092" column="113" selection-start-line="13092" selection-start-column="113" selection-end-line="13092" selection-end-column="113" />
             </state>
           </provider>
         </entry>
@@ -68,6 +109,11 @@
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>gar</find>
+    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -82,7 +128,8 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
+  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
     <option name="x" value="840" />
     <option name="width" value="840" />
     <option name="height" value="1050" />
@@ -142,18 +189,18 @@
       <option name="presentableId" value="Default" />
       <updated>1547380557052</updated>
       <workItem from="1547380558465" duration="2296000" />
-      <workItem from="1547382901824" duration="19889000" />
+      <workItem from="1547382901824" duration="27862000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="22185000" />
+    <option name="totallyTimeSpent" value="30158000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="840" y="0" width="840" height="1050" extended-state="0" />
+    <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.21984924" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.10696822" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -164,7 +211,7 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="8" visible="true" weight="0.24058577" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="8" visible="true" weight="0.23517382" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info anchor="bottom" id="CMake" order="11" />
@@ -185,27 +232,55 @@
     <entry file="file://$PROJECT_DIR$/Makefile">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/myftp.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-333">
+          <caret line="49" column="40" lean-forward="true" selection-start-line="49" selection-start-column="8" selection-end-line="49" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/sys/_types/_ssize_t.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="30" column="21" lean-forward="true" selection-start-line="30" selection-start-column="21" selection-end-line="30" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/i386/_types.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="91" column="28" selection-start-line="91" selection-start-column="28" selection-end-line="91" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/include/opencl-c.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="13092" column="113" selection-start-line="13092" selection-start-column="113" selection-end-line="13092" selection-end-column="113" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/sys/_types/_size_t.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="30" column="34" selection-start-line="30" selection-start-column="34" selection-end-line="30" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/myftpd.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2589">
-          <caret line="292" column="47" selection-start-line="292" selection-start-column="47" selection-end-line="292" selection-end-column="47" />
+        <state relative-caret-position="402">
+          <caret line="267" column="25" selection-start-line="267" selection-start-column="25" selection-end-line="267" selection-end-column="25" />
           <folding>
             <element signature="e#41#63#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/myftp.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="735">
-          <caret line="49" column="40" lean-forward="true" selection-start-line="49" selection-start-column="8" selection-end-line="49" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/myftpc.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5007">
-          <caret line="695" column="44" selection-start-line="695" selection-start-column="44" selection-end-line="695" selection-end-column="44" />
+        <state relative-caret-position="410">
+          <caret line="353" column="25" lean-forward="true" selection-start-line="353" selection-start-column="25" selection-end-line="353" selection-end-column="25" />
           <folding>
             <element signature="e#41#63#0" expanded="true" />
           </folding>

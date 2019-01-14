@@ -141,8 +141,18 @@ main(int argc, char *argv[]) {
                 exit(EXIT_FAILURE);
             }
             char dst[buf.Length+1];
+            char target[buf.Length+1];
             struct myftph reply;
             memset(&reply, 0, sizeof(struct myftph));
+            char result[DATASIZE*10];
+            memset(&result, 0, sizeof(result));
+            int result_size;
+            char result_tmp[DATASIZE*10];
+            memset(&result_tmp, 0, sizeof(result_tmp));
+            struct myftph_data reply_data;
+            memset(&reply_data, 0, sizeof(struct myftph_data));
+            ssize_t sent_size = 0;
+            char *now;
             switch (buf.Type) {
                 case TYPE_CWD:
                     fprintf(stderr, "<- recv CWD message\n");
@@ -185,8 +195,91 @@ main(int argc, char *argv[]) {
                     dump_message(&reply);
                     break;
                 case TYPE_LIST:
-                    // ファイルの情報を取得して、そうデータサイズを計算して、1024バイトごとに送信する
-                    break;
+                    fprintf(stderr, "<- recv LIST message\n");
+                    dump_data_message(&buf_data);
+                    memset(&target, 0, sizeof(target));
+                    strncpy(target, buf_data.Data, buf_data.Length);
+                    DIR *dir;
+                    struct dirent *dp;
+                    struct stat statbuf;
+                    if((dir = opendir(target)) == NULL) {
+                        perror("opendir");
+                        fprintf(stderr, "ERROR: command execution error\n");
+                        // TODO: エラーメッセージを返す
+                    }
+                    for(dp = readdir(dir); dp != NULL; dp = readdir(dir)) {
+                        stat(dp->d_name, &statbuf);
+                        strncpy(result, (S_ISDIR(statbuf.st_mode)) ? "d" : "-", 1);
+                        if(S_ISDIR(statbuf.st_mode)) { // dir
+                            strcat(result, (statbuf.st_mode & S_IRUSR) ? "r" : "-");
+                            strcat(result, (statbuf.st_mode & S_IWUSR) ? "w" : "-");
+                            strcat(result, (statbuf.st_mode & S_IWUSR) ? "x" : "-");
+                            strcat(result, (statbuf.st_mode & S_IRGRP) ? "r" : "-");
+                            strcat(result, (statbuf.st_mode & S_IWGRP) ? "w" : "-");
+                            strcat(result, (statbuf.st_mode & S_IXGRP) ? "x" : "-");
+                            strcat(result, (statbuf.st_mode & S_IROTH) ? "r" : "-");
+                            strcat(result, (statbuf.st_mode & S_IWOTH) ? "w" : "-");
+                            strcat(result, (statbuf.st_mode & S_IXOTH) ? "x" : "-");
+                            sprintf(result_tmp, "\t%s/\n\tlast access: %s\tlast modified: %s\tsize: %lld bytes\n",
+                                    dp->d_name,
+                                    asctime(localtime(&statbuf.st_atimespec.tv_sec)),
+                                    asctime(localtime(&statbuf.st_mtimespec.tv_sec)),
+                                    statbuf.st_size);
+                            strncat(result, result_tmp, strlen(result_tmp));
+                        } else {
+                            strcat(result, (statbuf.st_mode & S_IRUSR) ? "r" : "-");
+                            strcat(result, (statbuf.st_mode & S_IWUSR) ? "w" : "-");
+                            strcat(result, (statbuf.st_mode & S_IWUSR) ? "x" : "-");
+                            strcat(result, (statbuf.st_mode & S_IRGRP) ? "r" : "-");
+                            strcat(result, (statbuf.st_mode & S_IWGRP) ? "w" : "-");
+                            strcat(result, (statbuf.st_mode & S_IXGRP) ? "x" : "-");
+                            strcat(result, (statbuf.st_mode & S_IROTH) ? "r" : "-");
+                            strcat(result, (statbuf.st_mode & S_IWOTH) ? "w" : "-");
+                            strcat(result, (statbuf.st_mode & S_IXOTH) ? "x" : "-");
+                            sprintf(result_tmp, "\t%s/\n\tlast access: %s\tlast modified: %s\tsize: %lld bytes\n",
+                                    dp->d_name,
+                                    asctime(localtime(&statbuf.st_atimespec.tv_sec)),
+                                    asctime(localtime(&statbuf.st_mtimespec.tv_sec)),
+                                    statbuf.st_size);
+                            strncat(result, result_tmp, strlen(result_tmp));
+                        }
+                    }
+                    closedir(dir);
+
+                    memset(&reply, 0, sizeof(struct myftph));
+                    reply.Type = TYPE_OK_COMMAND;
+                    reply.Code = CODE_DATA_FOLLOW_S_TO_C;
+                    if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                        perror("send @ DIR OK");
+                        exit(EXIT_FAILURE);
+                    }
+                    dump_message(&reply);
+                    fprintf(stderr, "\t-> send OK message\n");
+
+                    // fprintf(stderr, "[debug] result size: %ld\n", strlen(result));
+                    result_size = (int) strlen(result);
+                    now = result;
+                    while (result_size > 0) {
+                        memset(&reply_data, 0, sizeof(struct myftph_data));
+                        strncpy(reply_data.Data, now, DATASIZE);
+                        if ((sent_size = send(server_socket, &reply_data, sizeof(struct myftph_data), 0)) < 0 ) {
+                            perror("send @ DIR DATA");
+                            exit(EXIT_FAILURE);
+                        }
+                        now += DATASIZE;
+                        result_size -= sent_size;
+                        // fprintf(stderr, "[debug] result_size: %d\n", result_size);
+                        reply_data.Type = TYPE_DATA;
+                        if (result_size < 0) {
+                            reply_data.Code = CODE_DATA_NO_FOLLOW;
+                            reply_data.Length = DATASIZE;
+                        } else {
+                            reply_data.Code = CODE_DATA_FOLLOW;
+                            reply_data.Length = DATASIZE;
+                        }
+                        dump_data_message(&reply_data);
+                    }
+                    continue;
                 case TYPE_RETR:
                     break;
                 case TYPE_STOR:
@@ -260,7 +353,7 @@ dump_message(struct myftph *message)
 void
 dump_data_message(struct myftph_data *message)
 {
-    char tmp[SIZE];
+    char tmp[DATASIZE+1];
     memset(&tmp, 0, sizeof(tmp));
     switch (message->Type) {
         case TYPE_QUIT:
@@ -279,9 +372,17 @@ dump_data_message(struct myftph_data *message)
             fprintf(stderr, "|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
             fprintf(stderr, "|\tCode: %s\n", OK_CODE_NAME[message->Code]);
             fprintf(stderr, "|\tLength: %d\n", message->Length);
-            fprintf(stderr, "|\tData: %s\n", message->Data);
+            fprintf(stderr, "|\tData: %s\n", tmp);
             fprintf(stderr, "+------------------------\n");
+            break;
         case TYPE_LIST:
+            strncpy(tmp, message->Data, message->Length + 1);
+            fprintf(stderr, "+-- [ (<-) LIST ]--------\n");
+            fprintf(stderr, "|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
+            fprintf(stderr, "|\tCode: %s\n", OK_CODE_NAME[message->Code]);
+            fprintf(stderr, "|\tLength: %d\n", message->Length);
+            fprintf(stderr, "|\tData: %s\n", tmp);
+            fprintf(stderr, "+------------------------\n");
             break;
         case TYPE_RETR:
             break;
@@ -293,7 +394,7 @@ dump_data_message(struct myftph_data *message)
             fprintf(stderr, "\t|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
             fprintf(stderr, "\t|\tCode: %s\n", OK_CODE_NAME[message->Code]);
             fprintf(stderr, "\t|\tLength: %d\n", message->Length);
-            fprintf(stderr, "\t|\tData: %s\n", message->Data);
+            fprintf(stderr, "\t|\tData: %s\n", tmp);
             fprintf(stderr, "\t+------------------------\n");
             break;
         case TYPE_CMD_ERR:
@@ -303,6 +404,13 @@ dump_data_message(struct myftph_data *message)
         case TYPE_UNKWN_ERR:
             break;
         case TYPE_DATA:
+            strncpy(tmp, message->Data, message->Length + 1);
+            fprintf(stderr, "\t+-- [ (->) DATA ]--------\n");
+            fprintf(stderr, "\t|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
+            fprintf(stderr, "\t|\tCode: %s\n", DATA_CODE_NAME[message->Code]);
+            fprintf(stderr, "\t|\tLength: %ld\n", strlen(message->Data));
+            fprintf(stderr, "\t|\tData: %s\n", tmp);
+            fprintf(stderr, "\t+------------------------\n");
             break;
         default:
             return;

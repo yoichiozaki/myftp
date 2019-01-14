@@ -331,12 +331,13 @@ main(int argc, char *argv[])
                 fprintf(stderr, "<- recv OK message\n");
                 dump_message(&reply);
                 struct myftph_data buf;
-                uint16_t want = reply.Length;
+                int want;
                 char result[reply.Length + 1];
                 memset(&result, 0, sizeof(result));
-                int times = want / sizeof(struct myftph_data);
-                size_t remain = (size_t) (want % sizeof(struct myftph_data));
+                int times = 999999999; // so big
+                int remain = 0;
                 int i = 0;
+                // fprintf(stderr, "[debug] times = %d, remain = %d\n", times, remain);
                 for (i = 0; i <= times; i++) {
                     memset(&buf, 0, sizeof(struct myftph_data));
                     if (i == times) {
@@ -351,10 +352,23 @@ main(int argc, char *argv[])
                             perror("recv @ DIR");
                             exit(EXIT_FAILURE);
                         }
+                        dump_data_message(&buf);
+                        if (times == 999999999) { // only first
+                            want = (int) buf.Length;
+                            times = want / (int) sizeof(struct myftph_data) - 1;
+                            remain = want % (int) sizeof(struct myftph_data);
+                            fprintf(stderr, "want = %d, times = %d, remain = %d\n", want, times, remain);
+                        }
                         fprintf(stderr, "<- recv DATA message\n");
                         dump_data_message(&buf);
                     }
+                    fprintf(stderr, "stdcat\n");
                     strcat(result, buf.Data);
+                }
+                char garbage[DATASIZE - reply.Length];
+                if (recv(client_socket, garbage, (size_t) (DATASIZE - remain), 0) < 0) {
+                    perror("recv @ PWD garbage");
+                    exit(EXIT_FAILURE);
                 }
                 fprintf(stderr, "%s\n", result);
                 // TODO: ------------------------------
@@ -637,7 +651,7 @@ dump_message(struct myftph *message)
 void
 dump_data_message(struct myftph_data *message)
 {
-    char tmp[DATASIZE];
+    char tmp[DATASIZE + 1];
     memset(&tmp, 0, sizeof(tmp));
     switch (message->Type) {
         case TYPE_QUIT:         // client -> server
@@ -656,7 +670,7 @@ dump_data_message(struct myftph_data *message)
             fprintf(stderr, "\t|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
             fprintf(stderr, "\t|\tCode: %s\n", OK_CODE_NAME[message->Code]);
             fprintf(stderr, "\t|\tLength: %d\n", message->Length);
-            fprintf(stderr, "\t|\tData: %s\n", message->Data);
+            fprintf(stderr, "\t|\tData: %s\n", tmp);
             fprintf(stderr, "\t+------------------------\n");
             break;
         case TYPE_LIST:         // client -> server
@@ -665,7 +679,7 @@ dump_data_message(struct myftph_data *message)
             fprintf(stderr, "\t|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
             fprintf(stderr, "\t|\tCode: %s\n", OK_CODE_NAME[message->Code]);
             fprintf(stderr, "\t|\tLength: %d\n", message->Length);
-            fprintf(stderr, "\t|\tData: %s\n", message->Data);
+            fprintf(stderr, "\t|\tData: %s\n", tmp);
             fprintf(stderr, "\t+------------------------\n");
             break;
         case TYPE_RETR:         // client -> server
@@ -678,7 +692,7 @@ dump_data_message(struct myftph_data *message)
             fprintf(stderr, "|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
             fprintf(stderr, "|\tCode: %s\n", OK_CODE_NAME[message->Code]);
             fprintf(stderr, "|\tLength: %d\n", message->Length);
-            fprintf(stderr, "|\tData: %s\n", message->Data);
+            fprintf(stderr, "|\tData: %s\n", tmp);
             fprintf(stderr, "+------------------------\n");
             break;
         case TYPE_CMD_ERR:      // client <- server
@@ -695,9 +709,9 @@ dump_data_message(struct myftph_data *message)
             }
             fprintf(stderr, "+-- [ (<-) DATA ]--------\n");
             fprintf(stderr, "|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
-            fprintf(stderr, "|\tCode: %s\n", OK_CODE_NAME[message->Code]);
-            fprintf(stderr, "|\tLength: %d\n", message->Length);
-            fprintf(stderr, "|\tData: %s\n", message->Data);
+            fprintf(stderr, "|\tCode: %s\n", DATA_CODE_NAME[message->Code]);
+            fprintf(stderr, "|\tLength: %ld\n", strlen(message->Data));
+            fprintf(stderr, "|\tData: %s\n", tmp);
             fprintf(stderr, "+------------------------\n");
             break;
         default:
