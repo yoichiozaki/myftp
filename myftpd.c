@@ -303,7 +303,76 @@ main(int argc, char *argv[]) {
                     }
                     continue;
                 case TYPE_RETR:
-                    break;
+                    fprintf(stderr, "<- recv RETR message\n");
+                    dump_data_message(&buf_data);
+
+                    memset(&target, 0, sizeof(target));
+                    strncpy(target, buf_data.Data, buf_data.Length);
+                    FILE *target_file;
+                    if((target_file = fopen(target, "r")) == NULL) {
+                        perror("fopen");
+                        fprintf(stderr, "ERROR: command execution error\n");
+                        memset(&reply, 0, sizeof(struct myftph));
+                        switch (errno) {
+                            case EACCES:
+                                reply.Type = TYPE_FILE_ERR;
+                                reply.Code = CODE_NO_ACCESS;
+                                break;
+                            case ENOENT:
+                            case ENOTDIR:
+                                reply.Type = TYPE_FILE_ERR;
+                                reply.Code = CODE_NO_SUCH_FILES;
+                                break;
+                            default:
+                                reply.Type = TYPE_UNKWN_ERR;
+                                reply.Code = CODE_UNKNOWN_ERROR;
+                                break;
+                        }
+                        if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                            perror("send @ RETR ERR");
+                            exit(EXIT_FAILURE);
+                        }
+                        fprintf(stderr, "\t-> send ERR message\n");
+                        dump_message(&reply);
+                        break;
+                    }
+
+                    memset(&reply, 0, sizeof(struct myftph));
+                    reply.Type = TYPE_OK_COMMAND;
+                    reply.Code = CODE_DATA_FOLLOW_S_TO_C;
+                    if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                        perror("send @ RETR OK");
+                        exit(EXIT_FAILURE);
+                    }
+                    dump_message(&reply);
+                    fprintf(stderr, "\t-> send OK message\n");
+                    size_t read;
+                    for (;;) {
+                        memset(&reply_data, 0, sizeof(struct myftph_data));
+                        reply_data.Type = TYPE_DATA;
+                        read = fread(&reply_data.Data, 1, DATASIZE, target_file);
+                        fprintf(stderr, "%s\n", reply_data.Data);
+                        if (read < DATASIZE) {
+                            if (feof(target_file) != 0) {
+                                reply_data.Code = CODE_DATA_NO_FOLLOW;
+                            } else {
+                                fprintf(stderr, "ERROR: command execution error\n");
+                                exit(EXIT_FAILURE);
+                            }
+                        } else {
+                            reply_data.Code = CODE_DATA_FOLLOW;
+                        }
+                        reply_data.Length = (uint16_t) read;
+                        if (send(server_socket, &reply_data, sizeof(struct myftph_data), 0) < 0) {
+                            perror("send @ RETR DATA");
+                            exit(EXIT_FAILURE);
+                        }
+                        fprintf(stderr, "\t-> send DATA message\n");
+                        dump_data_message(&reply_data);
+                        if (reply_data.Code == CODE_DATA_NO_FOLLOW) {
+                            break;
+                        }
+                    }
                 case TYPE_STOR:
                     break;
                 default:
@@ -407,6 +476,12 @@ dump_data_message(struct myftph_data *message)
             fprintf(stderr, "+------------------------\n");
             break;
         case TYPE_RETR:
+            strncpy(tmp, message->Data, message->Length + 1);
+            fprintf(stderr, "+-- [ (<-) RETR ]--------\n");
+            fprintf(stderr, "|\tType: %s\n", MESSAGE_TYPE_NAME[message->Type]);
+            fprintf(stderr, "|\tLength: %d\n", message->Length);
+            fprintf(stderr, "|\tData: %s\n", tmp);
+            fprintf(stderr, "+------------------------\n");
             break;
         case TYPE_STOR:
             break;
