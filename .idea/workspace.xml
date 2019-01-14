@@ -13,13 +13,7 @@
   <component name="ChangeListManager">
     <list default="true" id="04ff4d9f-856d-47a9-9f84-dcf2ce381f36" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/myftpc" beforeDir="false" afterPath="$PROJECT_DIR$/myftpc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/myftpc.c" beforeDir="false" afterPath="$PROJECT_DIR$/myftpc.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/myftpc.o" beforeDir="false" afterPath="$PROJECT_DIR$/myftpc.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/myftpd" beforeDir="false" afterPath="$PROJECT_DIR$/myftpd" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/myftpd.c" beforeDir="false" afterPath="$PROJECT_DIR$/myftpd.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/myftpd.o" beforeDir="false" afterPath="$PROJECT_DIR$/myftpd.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sample.txt" beforeDir="false" afterPath="$PROJECT_DIR$/sample.txt" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -55,8 +49,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/myftpd.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="555">
-              <caret line="72" column="15" selection-start-line="72" selection-start-column="15" selection-end-line="72" selection-end-column="15" />
+            <state relative-caret-position="457">
+              <caret line="77" column="55" selection-start-line="77" selection-start-column="48" selection-end-line="77" selection-end-column="55" />
               <folding>
                 <element signature="e#41#63#0" expanded="true" />
               </folding>
@@ -68,7 +62,7 @@
         <entry file="file://$PROJECT_DIR$/sample.txt">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1500">
-              <caret line="100" lean-forward="true" selection-start-line="100" selection-end-line="100" />
+              <caret line="100" selection-start-line="100" selection-end-line="100" />
             </state>
           </provider>
         </entry>
@@ -204,29 +198,29 @@
       <option name="presentableId" value="Default" />
       <updated>1547380557052</updated>
       <workItem from="1547380558465" duration="2296000" />
-      <workItem from="1547382901824" duration="54700000" />
+      <workItem from="1547382901824" duration="55482000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="56996000" />
+    <option name="totallyTimeSpent" value="57778000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.10696822" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.10696822" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32924336" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="8" visible="true" weight="0.23517382" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.23517382" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info anchor="bottom" id="CMake" order="11" />
@@ -294,7 +288,7 @@
     <entry file="file://$PROJECT_DIR$/sample.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1500">
-          <caret line="100" lean-forward="true" selection-start-line="100" selection-end-line="100" />
+          <caret line="100" selection-start-line="100" selection-end-line="100" />
         </state>
       </provider>
     </entry>
@@ -310,8 +304,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/myftpd.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="72" column="15" selection-start-line="72" selection-start-column="15" selection-end-line="72" selection-end-column="15" />
+        <state relative-caret-position="457">
+          <caret line="77" column="55" selection-start-line="77" selection-start-column="48" selection-end-line="77" selection-end-column="55" />
           <folding>
             <element signature="e#41#63#0" expanded="true" />
           </folding>

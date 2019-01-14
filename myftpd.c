@@ -34,6 +34,7 @@ main(int argc, char *argv[]) {
     current_dir = argv[1];
     chdir(current_dir);
 
+    int connected_server_socket;
     int server_socket;
 
     struct sockaddr_in server_socket_address;
@@ -51,7 +52,7 @@ main(int argc, char *argv[]) {
     server_socket_address.sin_port = htons(MYFTP_PORT);
     server_socket_address.sin_addr.s_addr = INADDR_ANY;
 
-    // bind server_socket with server_socket_address
+    // bind connected_server_socket with server_socket_address
     if (bind(server_socket, (struct sockaddr *)&server_socket_address, sizeof(struct sockaddr_in)) < 0) {
         perror("bind");
         exit(EXIT_FAILURE);
@@ -63,21 +64,31 @@ main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    // accept
-    if ((server_socket = accept(server_socket, (struct sockaddr *)&client_socket_address, &client_socket_address_len)) < 0) {
-        perror("accept");
-        exit(EXIT_FAILURE);
-    }
+    pid_t pid, cpid;
+    int status;
 
-//    pid_t pid;
-//    if ((pid = fork()) > 0) {
-//
-//    } else if (pid == 0) {
-//        close(server_socket);
-//    } else {
-//        perror("fork");
-//        exit(EXIT_FAILURE);
-//    }
+    for (;;) {
+
+        // accept
+        if ((connected_server_socket = accept(server_socket, (struct sockaddr *)&client_socket_address, &client_socket_address_len)) < 0) {
+            perror("accept");
+            exit(EXIT_FAILURE);
+        }
+        if ((pid = fork()) > 0) {
+            while ((cpid = waitpid(-1, &status, WNOHANG)) > 0) {
+                ;
+            }
+            if (cpid < 0 && errno != ECHILD) {
+                perror("waitpid");
+                exit(EXIT_FAILURE);
+            }
+        } else if (pid == 0) {
+            break;
+        } else {
+            perror("fork");
+            exit(EXIT_FAILURE);
+        }
+    }
 
     fprintf(stderr, "FORKED(pid = %d): accepted connection from IP: %s(port: %d)\n",
             getpid(), inet_ntoa(client_socket_address.sin_addr), client_socket_address.sin_port);
@@ -87,7 +98,7 @@ main(int argc, char *argv[]) {
         memset(&buf, 0, sizeof(buf));
         struct myftph_data buf_data;
         memset(&buf_data, 0, sizeof(buf_data));
-        if (recv(server_socket, &buf, sizeof(struct myftph), 0) < 0) {
+        if (recv(connected_server_socket, &buf, sizeof(struct myftph), 0) < 0) {
             perror("recv");
             exit(EXIT_FAILURE);
         }
@@ -101,13 +112,13 @@ main(int argc, char *argv[]) {
                     reply.Type = TYPE_OK_COMMAND;
                     reply.Code = CODE_WITH_NO_DATA;
                     reply.Length = 0;
-                    if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                    if (send(connected_server_socket, &reply, sizeof(struct myftph), 0) < 0) {
                         perror("send @ QUIT");
                         exit(EXIT_FAILURE);
                     }
                     fprintf(stderr, "\t-> send OK message\n");
                     dump_message(&reply);
-                    if (close(server_socket) < 0) {
+                    if (close(connected_server_socket) < 0) {
                         perror("close");
                         exit(EXIT_FAILURE);
                     }
@@ -124,7 +135,7 @@ main(int argc, char *argv[]) {
                     result.Code = CODE_WITH_NO_DATA;
                     result.Length = (uint16_t) (strlen(pathname));
                     strncpy(result.Data, pathname, result.Length); // trim last '\0'
-                    if (send(server_socket, &result, sizeof(struct myftph_data), 0) < 0) {
+                    if (send(connected_server_socket, &result, sizeof(struct myftph_data), 0) < 0) {
                         perror("send @ PWD");
                         exit(EXIT_FAILURE);
                     }
@@ -141,12 +152,12 @@ main(int argc, char *argv[]) {
             buf_data.Type = buf.Type;
             buf_data.Code = buf.Code;
             buf_data.Length = buf.Length;
-            if (recv(server_socket, &buf_data.Data, buf_data.Length, 0) < 0) {
+            if (recv(connected_server_socket, &buf_data.Data, buf_data.Length, 0) < 0) {
                 perror("recv");
                 exit(EXIT_FAILURE);
             }
             char garbage[DATASIZE - buf_data.Length];
-            if (recv(server_socket, garbage, (size_t) (DATASIZE - buf_data.Length), 0) < 0) {
+            if (recv(connected_server_socket, garbage, (size_t) (DATASIZE - buf_data.Length), 0) < 0) {
                 perror("recv @ garbage");
                 exit(EXIT_FAILURE);
             }
@@ -173,7 +184,7 @@ main(int argc, char *argv[]) {
                     if (chdir(dst) == 0) {
                         reply.Type = TYPE_OK_COMMAND;
                         reply.Code = CODE_WITH_NO_DATA;
-                        if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                        if (send(connected_server_socket, &reply, sizeof(struct myftph), 0) < 0) {
                             perror("send @ CWD");
                             exit(EXIT_FAILURE);
                         }
@@ -197,7 +208,7 @@ main(int argc, char *argv[]) {
                                 break;
                         }
                     }
-                    if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                    if (send(connected_server_socket, &reply, sizeof(struct myftph), 0) < 0) {
                         perror("send @ CWD");
                         exit(EXIT_FAILURE);
                     }
@@ -231,7 +242,7 @@ main(int argc, char *argv[]) {
                                 reply.Code = CODE_UNKNOWN_ERROR;
                                 break;
                         }
-                        if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                        if (send(connected_server_socket, &reply, sizeof(struct myftph), 0) < 0) {
                             perror("send @ LIST ERR");
                             exit(EXIT_FAILURE);
                         }
@@ -281,7 +292,7 @@ main(int argc, char *argv[]) {
                     memset(&reply, 0, sizeof(struct myftph));
                     reply.Type = TYPE_OK_COMMAND;
                     reply.Code = CODE_DATA_FOLLOW_S_TO_C;
-                    if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                    if (send(connected_server_socket, &reply, sizeof(struct myftph), 0) < 0) {
                         perror("send @ DIR OK");
                         exit(EXIT_FAILURE);
                     }
@@ -302,7 +313,7 @@ main(int argc, char *argv[]) {
                             reply_data.Length = DATASIZE;
                         }
                         strncpy(reply_data.Data, now, DATASIZE);
-                        if ((sent_size = send(server_socket, &reply_data, sizeof(struct myftph_data), 0)) < 0 ) {
+                        if ((sent_size = send(connected_server_socket, &reply_data, sizeof(struct myftph_data), 0)) < 0 ) {
                             perror("send @ DIR DATA");
                             exit(EXIT_FAILURE);
                         }
@@ -338,7 +349,7 @@ main(int argc, char *argv[]) {
                                 reply.Code = CODE_UNKNOWN_ERROR;
                                 break;
                         }
-                        if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                        if (send(connected_server_socket, &reply, sizeof(struct myftph), 0) < 0) {
                             perror("send @ RETR ERR");
                             exit(EXIT_FAILURE);
                         }
@@ -350,7 +361,7 @@ main(int argc, char *argv[]) {
                     memset(&reply, 0, sizeof(struct myftph));
                     reply.Type = TYPE_OK_COMMAND;
                     reply.Code = CODE_DATA_FOLLOW_S_TO_C;
-                    if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                    if (send(connected_server_socket, &reply, sizeof(struct myftph), 0) < 0) {
                         perror("send @ RETR OK");
                         exit(EXIT_FAILURE);
                     }
@@ -373,7 +384,7 @@ main(int argc, char *argv[]) {
                             reply_data.Code = CODE_DATA_FOLLOW;
                         }
                         reply_data.Length = (uint16_t) read;
-                        if (send(server_socket, &reply_data, sizeof(struct myftph_data), 0) < 0) {
+                        if (send(connected_server_socket, &reply_data, sizeof(struct myftph_data), 0) < 0) {
                             perror("send @ RETR DATA");
                             exit(EXIT_FAILURE);
                         }
@@ -408,7 +419,7 @@ main(int argc, char *argv[]) {
                                 reply.Code = CODE_UNKNOWN_ERROR;
                                 break;
                         }
-                        if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                        if (send(connected_server_socket, &reply, sizeof(struct myftph), 0) < 0) {
                             perror("send @ STOR ERR");
                             exit(EXIT_FAILURE);
                         }
@@ -418,7 +429,7 @@ main(int argc, char *argv[]) {
                     } else {
                         reply.Type = TYPE_OK_COMMAND;
                         reply.Code = CODE_DATA_FOLLOW_C_TO_S;
-                        if (send(server_socket, &reply, sizeof(struct myftph), 0) < 0) {
+                        if (send(connected_server_socket, &reply, sizeof(struct myftph), 0) < 0) {
                             perror("send @ STOR ERR");
                             exit(EXIT_FAILURE);
                         }
@@ -427,7 +438,7 @@ main(int argc, char *argv[]) {
                     }
                     for (;;) {
                         memset(&buf_data, 0, sizeof(struct myftph_data));
-                        if (recv(server_socket, &buf_data, sizeof(struct myftph_data), 0) < 0) {
+                        if (recv(connected_server_socket, &buf_data, sizeof(struct myftph_data), 0) < 0) {
                             perror("recv @ DATA");
                             exit(EXIT_FAILURE);
                         }
