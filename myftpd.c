@@ -27,11 +27,17 @@ int
 main(int argc, char *argv[]) {
 
     char *current_dir;
-    if (argc != 2) {
-        fprintf(stderr, "%s: Usage: %s path/to/current/dir\n", argv[0], argv[0]);
+    char dirbuf[SIZE];
+    if (argc != 2 && argc != 1) {
+        fprintf(stderr, "%s: Usage: %s [path/to/current/dir]\n", argv[0], argv[0]);
         exit(EXIT_FAILURE);
     }
-    current_dir = argv[1];
+    if (argc == 1) {
+        current_dir = argv[1];
+    } else {
+        getcwd(dirbuf, sizeof(dirbuf));
+        current_dir = dirbuf;
+    }
     chdir(current_dir);
 
     int connected_server_socket;

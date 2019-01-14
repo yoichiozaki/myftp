@@ -11,7 +11,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="04ff4d9f-856d-47a9-9f84-dcf2ce381f36" name="Default Changelist" comment="" />
+    <list default="true" id="04ff4d9f-856d-47a9-9f84-dcf2ce381f36" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/myftpd.c" beforeDir="false" afterPath="$PROJECT_DIR$/myftpd.c" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -46,8 +48,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/myftpd.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="975">
-              <caret line="65" lean-forward="true" selection-start-line="65" selection-end-line="65" />
+            <state relative-caret-position="421">
+              <caret line="38" column="29" selection-start-line="38" selection-start-column="29" selection-end-line="38" selection-end-column="29" />
               <folding>
                 <element signature="e#41#63#0" expanded="true" />
               </folding>
@@ -195,15 +197,16 @@
       <option name="presentableId" value="Default" />
       <updated>1547380557052</updated>
       <workItem from="1547380558465" duration="2296000" />
-      <workItem from="1547382901824" duration="55958000" />
+      <workItem from="1547382901824" duration="56311000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="58254000" />
+    <option name="totallyTimeSpent" value="58607000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.10696822" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -300,8 +303,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/myftpd.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="975">
-          <caret line="65" lean-forward="true" selection-start-line="65" selection-end-line="65" />
+        <state relative-caret-position="421">
+          <caret line="38" column="29" selection-start-line="38" selection-start-column="29" selection-end-line="38" selection-end-column="29" />
           <folding>
             <element signature="e#41#63#0" expanded="true" />
           </folding>
