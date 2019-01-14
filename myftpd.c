@@ -271,8 +271,8 @@ main(int argc, char *argv[]) {
                             strcat(result, (statbuf.st_mode & S_IXOTH) ? "x" : "-");
                             sprintf(result_tmp, "\t%s/\n\tlast access: %s\tlast modified: %s\tsize: %lld bytes\n",
                                     dp->d_name,
-                                    asctime(localtime(&statbuf.st_atimespec.tv_sec)),
-                                    asctime(localtime(&statbuf.st_mtimespec.tv_sec)),
+                                    asctime(localtime(&statbuf.st_atime)),
+                                    asctime(localtime(&statbuf.st_mtime)),
                                     statbuf.st_size);
                             strncat(result, result_tmp, strlen(result_tmp));
                         } else {
@@ -287,8 +287,8 @@ main(int argc, char *argv[]) {
                             strcat(result, (statbuf.st_mode & S_IXOTH) ? "x" : "-");
                             sprintf(result_tmp, "\t%s/\n\tlast access: %s\tlast modified: %s\tsize: %lld bytes\n",
                                     dp->d_name,
-                                    asctime(localtime(&statbuf.st_atimespec.tv_sec)),
-                                    asctime(localtime(&statbuf.st_mtimespec.tv_sec)),
+                                    asctime(localtime(&statbuf.st_atime)),
+                                    asctime(localtime(&statbuf.st_mtime)),
                                     statbuf.st_size);
                             strncat(result, result_tmp, strlen(result_tmp));
                         }

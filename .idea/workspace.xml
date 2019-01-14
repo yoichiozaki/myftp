@@ -12,6 +12,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="04ff4d9f-856d-47a9-9f84-dcf2ce381f36" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/myftpc.c" beforeDir="false" afterPath="$PROJECT_DIR$/myftpc.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/myftpd.c" beforeDir="false" afterPath="$PROJECT_DIR$/myftpd.c" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -33,11 +35,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/myftpc.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4491">
-              <caret line="928" column="12" selection-start-line="928" selection-start-column="12" selection-end-line="928" selection-end-column="57" />
+            <state relative-caret-position="1095">
+              <caret line="73" column="22" selection-start-line="73" selection-start-column="22" selection-end-line="73" selection-end-column="22" />
               <folding>
                 <element signature="e#41#63#0" expanded="true" />
               </folding>
@@ -45,11 +47,21 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/sys/stat.h">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="224">
+              <caret line="230" column="8" selection-start-line="230" selection-start-column="8" selection-end-line="230" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/myftpd.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="421">
-              <caret line="38" column="29" selection-start-line="38" selection-start-column="29" selection-end-line="38" selection-end-column="29" />
+            <state relative-caret-position="399">
+              <caret line="289" column="71" selection-start-line="289" selection-start-column="71" selection-end-line="289" selection-end-column="71" />
+              <caret line="290" column="71" selection-start-line="290" selection-start-column="71" selection-end-line="290" selection-end-column="71" />
               <folding>
                 <element signature="e#41#63#0" expanded="true" />
               </folding>
@@ -120,6 +132,7 @@
       <find>&lt;- recv unknown message</find>
       <find>99</find>
       <find>connected_server_socket</find>
+      <find>gethostbyname</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -197,12 +210,12 @@
       <option name="presentableId" value="Default" />
       <updated>1547380557052</updated>
       <workItem from="1547380558465" duration="2296000" />
-      <workItem from="1547382901824" duration="56311000" />
+      <workItem from="1547382901824" duration="57293000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="58607000" />
+    <option name="totallyTimeSpent" value="59589000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
@@ -291,20 +304,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/myftpc.c">
+    <entry file="file:///Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include/sys/stat.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4491">
-          <caret line="928" column="12" selection-start-line="928" selection-start-column="12" selection-end-line="928" selection-end-column="57" />
+        <state relative-caret-position="224">
+          <caret line="230" column="8" selection-start-line="230" selection-start-column="8" selection-end-line="230" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/myftpd.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="399">
+          <caret line="289" column="71" selection-start-line="289" selection-start-column="71" selection-end-line="289" selection-end-column="71" />
+          <caret line="290" column="71" selection-start-line="290" selection-start-column="71" selection-end-line="290" selection-end-column="71" />
           <folding>
             <element signature="e#41#63#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/myftpd.c">
+    <entry file="file://$PROJECT_DIR$/myftpc.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="421">
-          <caret line="38" column="29" selection-start-line="38" selection-start-column="29" selection-end-line="38" selection-end-column="29" />
+        <state relative-caret-position="1095">
+          <caret line="73" column="22" selection-start-line="73" selection-start-column="22" selection-end-line="73" selection-end-column="22" />
           <folding>
             <element signature="e#41#63#0" expanded="true" />
           </folding>
